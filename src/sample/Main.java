@@ -7,16 +7,16 @@ JSON files in the form that they were obtained using the Quizlet API, or into te
 human-readable format.
  */
 
-package sample;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,7 +32,7 @@ public class Main extends Application {
     private static TextField urlField = new TextField();
     private static VBox vBox = new VBox();
     private static VBox termDefVBox = new VBox();
-    private static int textSize = 20;
+    private static int textSize = 18;
     private static String docString;
     private static Button zoomInButton = new Button("+");
     private static Button zoomOutButton = new Button("-");
@@ -43,13 +43,17 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
 
         // Gets the Quizlet logo and creates a view for it to display in
         ImageView weatherUndergroundLogo = new ImageView(new Image("https://quizlet.com/static/ThisUsesQuizlet-Blue.png"));
 
         // Creates URL label and Search button.
         Label urlLabel = new Label("URL:");
-        urlLabel.setFont(new Font("Arial", 20));
+
+        urlLabel.setTextFill(Paint.valueOf("EEEEEE"));
+        urlLabel.setFont(new Font("Arial", textSize));
         Button searchButton = new Button("Search");
         searchButton.setOnAction(x -> {
             setNoteCardSet(urlField.getText());
@@ -70,35 +74,44 @@ public class Main extends Application {
 
         // Creates the box at the top of the application and places elements into it.
         HBox upperHBox = new HBox(weatherUndergroundLogo, urlLabel, urlField, searchButton, zoomInButton, zoomOutButton, exportToButton);
-        upperHBox.setSpacing(10);
-
+        upperHBox.setSpacing(8);
+        upperHBox.setAlignment(Pos.BASELINE_LEFT);
         vBox.getChildren().addAll(upperHBox, termDefVBox);
         scrollPane.setContent(vBox);
 
         // Creates and shows the window
         primaryStage.setTitle("Quizlet App");
-        Scene scene = new Scene(scrollPane, 800, 500);
+        Scene scene = new Scene(scrollPane, 800, 500, Color.BLACK);
         resizeWindowWidth(800);
         vBox.setPadding(new Insets(20, 40, 20, 40));
         scene.widthProperty().addListener((observable, oldValue, newValue) -> resizeWindowWidth(newValue));
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        scene.getStylesheets().add("/stylesheet.css");
+
+        vBox.setStyle("-fx-background-color: #216CCF;" +
+                        "");
+        scrollPane.setStyle("-fx-background-color: #216CCF;");
+        termDefVBox.setStyle("-fx-background-color: #FFFFFF;" +
+                             "-fx-background-radius: 10");
     }
 
-    void exportToText() {
+    private void exportToText() {
+        // Open FileChooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TEXT FILE", "*.txt"));
         fileChooser.setTitle("Save To Text");
         File file = fileChooser.showSaveDialog(stage);
+
         if (file != null) {
             try {
+                // Write file
                 FileWriter fileWriter = new FileWriter(file);
-
                 Pattern termPattern = Pattern.compile("\"term\": \"(.*?)\",");
                 Matcher termMatcher = termPattern.matcher(docString);
                 Pattern defPattern = Pattern.compile("\"definition\": \"(.*?)\",");
                 Matcher defMatcher = defPattern.matcher(docString);
-
                 while (termMatcher.find()) {
                     String term = termMatcher.group(1);
                     fileWriter.write(term + ":\n");
@@ -114,13 +127,16 @@ public class Main extends Application {
         }
     }
 
-    void exportToJSON() {
+    private void exportToJSON() {
+        // Open FileChooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON FILE", "*.json"));
         fileChooser.setTitle("Save To JSON");
         File file = fileChooser.showSaveDialog(stage);
+
         if (file != null) {
             try {
+                // Write file
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(docString);
                 fileWriter.close();
@@ -138,22 +154,17 @@ public class Main extends Application {
         if (setMatcher.find()) {
             notecardSet = setMatcher.group(1);
         }
-        Credentials.setNotecardSet(notecardSet);
+        sample.Credentials.setNotecardSet(notecardSet);
 
         // Gets the quizlet JSON using the Quizlet API and the set obtained from the URL
-        Document quizletDoc = Credentials.getQuizletDoc();
-        if (quizletDoc != null) {
-            docString = quizletDoc.toString();
-        }
+        Document quizletDoc = sample.Credentials.getQuizletDoc();
+        if (quizletDoc != null) docString = quizletDoc.toString();
     }
 
     static String displayNoteCardUI() {
+        if (docString == null || docString.equals("")) return null;
+
         termDefVBox.getChildren().clear();
-
-        if (docString == null || docString.equals("")) {
-            return null;
-        }
-
         exportToButton.setDisable(false);
 
         // Creates a pattern matcher that can parse the JSON's terms and definitions. Because the extraction is simple,
@@ -168,7 +179,7 @@ public class Main extends Application {
             HBox termDefHBox = new HBox();
             termDefHBox.setBorder(
                 new Border(
-                    new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+                    new BorderStroke(Color.valueOf("#216CCF"), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
                 )
             );
             termDefHBox.setSpacing(40);
@@ -178,6 +189,7 @@ public class Main extends Application {
             term = term.replace("\\n", "\n");
             term = term.replace("\\\"", "\"");
             Label termLabel = new Label(term);
+            termLabel.setTextFill(Paint.valueOf("#455358"));
             termLabel.setFont(new Font("Arial", textSize));
             termLabel.setWrapText(true);
             termLabel.setMinWidth(150);
@@ -191,6 +203,7 @@ public class Main extends Application {
                 def = def.replace("\\\"", "\"");
                 Label defLabel = new Label(def);
                 defLabel.setFont(new Font("Arial", textSize));
+                defLabel.setTextFill(Paint.valueOf("#455358"));
                 defLabel.setWrapText(true);
                 termDefHBox.getChildren().add(defLabel);
             }
@@ -201,6 +214,7 @@ public class Main extends Application {
     }
 
     private void resizeWindowWidth(Number newValue) {
+        // Keeps UI to scale with window
         int width = newValue.intValue();
         vBox.setMaxWidth(width-16);
         vBox.setMinWidth(width-16);
@@ -218,11 +232,9 @@ public class Main extends Application {
         // Decreases the textSize variable and updates the UI to reflect it
         textSize -= 2;
         displayNoteCardUI();
-        if (textSize <= 12) zoomOutButton.setDisable(true);
+        if (textSize <= 8) zoomOutButton.setDisable(true);
         zoomInButton.setDisable(false);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 }
