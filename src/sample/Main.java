@@ -25,33 +25,38 @@ import org.jsoup.nodes.Document;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main extends Application {
-    private static TextField urlField = new TextField();
+    private static TextField urlField;
     private static VBox vBox = new VBox();
     private static VBox termDefVBox = new VBox();
     private static int textSize = 18;
-    private static String docString;
-    private static Button zoomInButton = new Button("+");
-    private static Button zoomOutButton = new Button("-");
+    private static String jsonString;
+    private static Button zoomInButton;
+    private static Button zoomOutButton;
     private static Stage stage;
-    private static MenuButton exportToButton = new MenuButton("Export To...");
+    private static MenuButton exportToButton;
 
     @Override
     public void start(Stage primaryStage) {
+        // Initializes static fields (must be done here to fix issue with test class)
+        urlField = new TextField();
+        zoomInButton = new Button("+");
+        zoomOutButton = new Button("-");
         stage = primaryStage;
+        exportToButton = new MenuButton("Export To...");
+
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
 
         // Gets the Quizlet logo and creates a view for it to display in
         ImageView weatherUndergroundLogo = new ImageView(new Image("https://quizlet.com/static/ThisUsesQuizlet-Blue.png"));
 
         // Creates URL label and Search button.
         Label urlLabel = new Label("URL:");
-
         urlLabel.setTextFill(Paint.valueOf("EEEEEE"));
         urlLabel.setFont(new Font("Arial", textSize));
         Button searchButton = new Button("Search");
@@ -60,6 +65,10 @@ public class Main extends Application {
             displayNoteCardUI();
         });
 
+        // Setup Open button
+        Button openButton = new Button("Open");
+        openButton.setOnAction(x -> openJsonFile());
+
         // Setup zoom in/out buttons
         zoomInButton.setOnAction(x -> increaseTextSize());
         zoomOutButton.setOnAction(x -> decreaseTextSize());
@@ -67,15 +76,17 @@ public class Main extends Application {
         // Set up "Export To..." MenuButton.
         exportToButton.setDisable(true);
         MenuItem exportToText = new MenuItem("Text");
-        exportToText.setOnAction(x -> exportToText());
+        exportToText.setOnAction(x -> exportToText(jsonString));
         MenuItem exportToJSON = new MenuItem("JSON");
-        exportToJSON.setOnAction(x -> exportToJSON());
+        exportToJSON.setOnAction(x -> exportToJSON(jsonString));
         exportToButton.getItems().addAll(exportToText, exportToJSON);
 
         // Creates the box at the top of the application and places elements into it.
-        HBox upperHBox = new HBox(weatherUndergroundLogo, urlLabel, urlField, searchButton, zoomInButton, zoomOutButton, exportToButton);
+        HBox upperHBox = new HBox(weatherUndergroundLogo, urlLabel, urlField, searchButton, zoomInButton, zoomOutButton,
+            exportToButton, openButton);
         upperHBox.setSpacing(8);
         upperHBox.setAlignment(Pos.BASELINE_LEFT);
+        upperHBox.setPadding(new Insets(0, 0, 20, 0));
         vBox.getChildren().addAll(upperHBox, termDefVBox);
         scrollPane.setContent(vBox);
 
@@ -88,30 +99,36 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        // Style settings
         scene.getStylesheets().add("/stylesheet.css");
-
-        vBox.setStyle("-fx-background-color: #216CCF;" +
-                        "");
+        vBox.setStyle("-fx-background-color: #216CCF;");
         scrollPane.setStyle("-fx-background-color: #216CCF;");
         termDefVBox.setStyle("-fx-background-color: #FFFFFF;" +
                              "-fx-background-radius: 10");
     }
 
-    private void exportToText() {
+    void exportToText(String exportString) {
         // Open FileChooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TEXT FILE", "*.txt"));
         fileChooser.setTitle("Save To Text");
+        fileChooser.setInitialFileName("NoteCards.txt");
+        File workingDirectory = new File(System.getProperty("user.dir"));
+        fileChooser.setInitialDirectory(workingDirectory);
         File file = fileChooser.showSaveDialog(stage);
 
+        writeToTextFile(exportString, file);
+    }
+
+    static void writeToTextFile(String exportString, File file) {
         if (file != null) {
             try {
                 // Write file
                 FileWriter fileWriter = new FileWriter(file);
                 Pattern termPattern = Pattern.compile("\"term\": \"(.*?)\",");
-                Matcher termMatcher = termPattern.matcher(docString);
+                Matcher termMatcher = termPattern.matcher(exportString);
                 Pattern defPattern = Pattern.compile("\"definition\": \"(.*?)\",");
-                Matcher defMatcher = defPattern.matcher(docString);
+                Matcher defMatcher = defPattern.matcher(exportString);
                 while (termMatcher.find()) {
                     String term = termMatcher.group(1);
                     fileWriter.write(term + ":\n");
@@ -127,18 +144,25 @@ public class Main extends Application {
         }
     }
 
-    private void exportToJSON() {
+    void exportToJSON(String exportString) {
         // Open FileChooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON FILE", "*.json"));
         fileChooser.setTitle("Save To JSON");
+        fileChooser.setInitialFileName("NoteCards.json");
+        File workingDirectory = new File(System.getProperty("user.dir"));
+        fileChooser.setInitialDirectory(workingDirectory);
         File file = fileChooser.showSaveDialog(stage);
 
+        writeToJSONFile(exportString, file);
+    }
+
+    static void writeToJSONFile(String exportString, File file) {
         if (file != null) {
             try {
                 // Write file
                 FileWriter fileWriter = new FileWriter(file);
-                fileWriter.write(docString);
+                fileWriter.write(exportString);
                 fileWriter.close();
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
@@ -150,19 +174,21 @@ public class Main extends Application {
         // Parses the set number out of the URL and sends it to the Credentials class
         Pattern setPattern = Pattern.compile("https://quizlet.com/(\\d+)/.*");
         Matcher setMatcher = setPattern.matcher(url);
-        String notecardSet = "";
+        String notecardSet;
         if (setMatcher.find()) {
             notecardSet = setMatcher.group(1);
+        } else {
+            return;
         }
-        sample.Credentials.setNotecardSet(notecardSet);
+        Credentials.setNotecardSet(notecardSet);
 
         // Gets the quizlet JSON using the Quizlet API and the set obtained from the URL
-        Document quizletDoc = sample.Credentials.getQuizletDoc();
-        if (quizletDoc != null) docString = quizletDoc.toString();
+        Document quizletDoc = Credentials.getQuizletDoc();
+        if (quizletDoc != null) jsonString = quizletDoc.toString();
     }
 
     static String displayNoteCardUI() {
-        if (docString == null || docString.equals("")) return null;
+        if (jsonString == null || jsonString.equals("")) return null;
 
         termDefVBox.getChildren().clear();
         exportToButton.setDisable(false);
@@ -170,9 +196,9 @@ public class Main extends Application {
         // Creates a pattern matcher that can parse the JSON's terms and definitions. Because the extraction is simple,
         // only simple regular expressions are necessary.
         Pattern termPattern = Pattern.compile("\"term\": \"(.*?)\",");
-        Matcher termMatcher = termPattern.matcher(docString);
+        Matcher termMatcher = termPattern.matcher(jsonString);
         Pattern defPattern = Pattern.compile("\"definition\": \"(.*?)\",");
-        Matcher defMatcher = defPattern.matcher(docString);
+        Matcher defMatcher = defPattern.matcher(jsonString);
 
         while (termMatcher.find()) {
             // Setup termDefHBox for this term/definition set
@@ -210,7 +236,7 @@ public class Main extends Application {
 
             termDefVBox.getChildren().add(termDefHBox);
         }
-        return docString;
+        return jsonString;
     }
 
     private void resizeWindowWidth(Number newValue) {
@@ -234,6 +260,32 @@ public class Main extends Application {
         displayNoteCardUI();
         if (textSize <= 8) zoomOutButton.setDisable(true);
         zoomInButton.setDisable(false);
+    }
+
+    private void openJsonFile() {
+        // Opens a JSON file of note cards and displays it in the UI
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON FILE", "*.json"));
+        fileChooser.setTitle("Open JSON");
+        File workingDirectory = new File(System.getProperty("user.dir"));
+        fileChooser.setInitialDirectory(workingDirectory);
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file != null) {
+            try {
+                // Parse file
+                jsonString = "";
+                Scanner input = new Scanner(file);
+                while (input.hasNext()) {
+                    jsonString += input.nextLine();
+                }
+
+                // Display file
+                displayNoteCardUI();
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
     public static void main(String[] args) { launch(args); }
