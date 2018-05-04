@@ -1,0 +1,300 @@
+Abnormal:
+Data that is totally unexpected. Ex: A string \"three\" instead of an integer like 3.
+
+Accessor:
+Extracts information from an object without changing it. Usually prefixed with 'get'.
+
+Address:
+Reference to a value or object's memory location.
+
+Algorithm:
+Finite set of well-defined instructions for accomplishing a task - a Recipe.
+
+Applet:
+Graphical Java program that runs in a web browser or viewer.
+
+Argument:
+Value we pass to an object via a parameter.
+
+Array:
+Type of object used to store groups of similar elements.
+
+Assignment:
+Storing the right-hand value of a statement in the variable on the left side of =.
+
+Asynchronous:
+Data transmitted in small amounts at any time.
+
+Attributes:
+Nouns that describe an object like colors, size, name, and position.
+
+Batch:
+Processing of data with a delay in data collection and actual data entry.
+
+Behaviors:
+Verbs that denote the actions of an object or what it does - methods.
+
+Binary:
+ordered search method - list is halved until required item is found.
+
+Block:
+Set of declarations and statements between a set of curly brackets { }.
+
+Boolean:
+Data type used to represent a single true or false value.
+
+Branching:
+Selection based on a given condition with two outcomes, true or false.
+
+Buffer:
+Temporary storage location of limited size. holds data waiting to be used.
+
+Bus:
+Set of parallel wires that allow bits to be transmitted over one of the wires.
+
+Casting:
+Changing of data type. Ex: int value into a double. Referred to as type conversion.
+
+Character:
+Data type used for letters, digits 0...9, and punctuation symbols.
+
+Class:
+Template used to create objects which shows features and how they behave.
+
+Client:
+Makes requests for service on a network - printing, get files, communication.
+
+Comments:
+used to give helpful information about a code but ignored by a computer.
+
+Compiler:
+Converts high-level language (C++) to low level machine language (1's and 0's)
+
+Concatenation:
+Joining two o more strings or characters together to form one string.
+
+Condition:
+Logical expression determined to be true or false - if true execution continues.
+
+Constructor:
+Special method creates an instance of a class executed with \"new\" command.
+
+Control Statement:
+Allows a program to proceed in a non-sequential matter. Ex: if/else, switch, while.
+
+Data:
+Testing that involves valid and invalid input - range checks.
+
+Declaration:
+Announcement of variable or object - includes data type and identifier.
+
+Dot:
+Notation used to externally invoke methods. It is not necessary for internal calls.
+
+Efficiency:
+The time and RAM needed to execute an algorithm.
+
+Encapsulation:
+The term private is used to protect (hide) data or methods which prevents access.
+
+Encryption:
+Process of changing data so that it can't be read without a decoding key.
+
+Exceptions:
+Information about a problem during compiling or execution.
+
+Extreme:
+Data that lies outside the expected limits.
+
+Field:
+Variable declared in Class body and outside all Class methods - assigned Default.
+
+Final:
+Declaration of constant variables Pi=3.14 that should not be changed.
+
+Floating Point:
+Data type used for any signed or unsigned number with a decimal - double.
+
+Formatted:
+Numerical and textual values properly aligned in an output display.
+
+Functional:
+Testing of selection constructs like switch and if/else.
+
+Garbage Collector:
+Removes stored data from memory at the end of a program's life - Housekeeping.
+
+Hertz:
+Speed of a computer's internal clock - measure of CPU speed in cycles per second.
+
+Identifier:
+Name used to describe classes, methods, variables. Starts with a letter - no spaces.
+
+Increment:
+Increases or decreases for a loop counter. Ex: i++, i--, i+=2, or i=2i+1.
+
+Inheritance:
+One class assumes the method of another superclass or parent.
+
+Initialization:
+Sets a variable to a value accomplished with an assignment operator (=) sign.
+
+Instance:
+An imprint of an object having its own individual properties - field assignments.
+
+Integer:
+Data type used for any positive or negative number without a decimal point.
+
+Interpreter:
+Program that reads and executes one line at a time. Ex: Java Virtual Machine.
+
+Local:
+Variable declared and used only within a method {block} or construct - No default.
+
+Logic:
+Error caused by incorrect sequence or choice of condition.
+
+Loop:
+used to execute a block of code repeatedly without writing it multiple times.
+
+Machine:
+Code created by the compiler or interpreter.
+
+Message:
+Instruction sent to a class or an object to perform a task.
+
+Method:
+Seqence of instructions an object follows to perform a task. Behavior - Verb.
+
+Modifiers:
+Create levels of access - public, private, static, final, and abstract.
+
+Modularity:
+Problem broken down into smaller components.
+
+Mutator:
+Method that alters the attributes of an object. Usually prefixed with 'set'.
+
+Nesting:
+Placing one control statements inside another.
+
+Node:
+Computer or peripheral (printer) connected to a network. Also element of a tree.
+
+Normal:
+Data that lies within the expected range - includes data at the outer limits.
+
+Object:
+Set of related variabes and methods that model abstractions of the real-world.
+
+On-line:
+Interactive processing of data. The system must have access to stored files.
+
+Operators:
+Symbols that stand for basic functions (+, -, /, *, %).
+
+Overflow:
+When a calculation is made that exceeds the upper limit (largest value).
+
+Overloading:
+Using the same method name but different type and number of parameters.
+
+Parameter:
+Variable name that is replaced by an actual value or memory location.
+
+Pass-by-reference:
+Parameters are assigned a memory location or address.
+
+Pass-by-value:
+Parameters are assigned arguments.
+
+Portable:
+Code capable of running on different operating systems - Java Bytecode.
+
+Precedence:
+Rules that govern the order in which an expression is solved.
+
+Primitive:
+Data types - byte, short, int, long, float, double, char and Boolean.
+
+Prototype:
+Semi-functional system used to understand how the real one will work.
+
+Queue:
+Data structure that accesses data in a First In - First Out method - ticket line.
+
+Real-time:
+immediate processing of data without the intervention of humans - sensors.
+
+Recursion:
+Repetitive behavior which involves a method calling itself.
+
+Reference:
+Handle that points to the memory location - address of an object.
+
+Return-type:
+Data type method will send back to user. Ex: int, double, boolean. If none, then void.
+
+Runtime:
+Errors caused by a compiled program - \u00f7 by 0, missing file, underflow/overflow.
+
+Scope:
+Portion of program in which variable can be used. Local vs. Field (global).
+
+Sequence:
+Action in an algorithm flow from one step to the next.
+
+Sequential:
+Unordered search method - each element is inspected until required item is found.
+
+Server:
+Responds to request of service on a network - prints, sends files, internet connect.
+
+Shadow:
+Parameter and Class field have the same identifier - use myName or better this.name.
+
+Signature:
+The access, return type, function name, and parameters of a method.
+
+Source:
+Code is created by a programmer in an integrated development environment (BlueJ).
+
+Stack:
+Data structure that access data in a Last In First Out method - pile of plates.
+
+Static:
+Variable or method that can be called without instantiating the class.
+
+String:
+Sequence of characters enclosed in quotation marks.
+
+Synchronous:
+Data transmitted in larger blocks in a timed manner.
+
+Syntax:
+Errors caught while compiling - caused by misspellings and wrong punctuation.
+
+Tokenize:
+Method that returns the next word from current line of text.
+
+Trace:
+Recording expected outcomes (values) of each variable at each step of execution.
+
+Tree:
+Series of nodes with left (\u003C) and right (\u003E) pointers. Node have max of 2 sub-nodes.
+
+Underflow:
+When a number is close to its lower limit is divided by a number greater than 1.
+
+Validation:
+Check data for completeness and accuracy by range, type, and/or format.
+
+Verification:
+Check data for errors by proofreading or double entry.
+
+Weighted:
+Check value created by multiplying each digit and then summing the products.
+
+Whitespace:
+Spaces, tabs, newline, etc. Removed by compression algorithms.
+
